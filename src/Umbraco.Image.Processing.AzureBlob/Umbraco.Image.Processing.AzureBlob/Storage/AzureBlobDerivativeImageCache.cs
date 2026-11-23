@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using Azure;
+using Azure.Identity;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Microsoft.Extensions.Options;
@@ -34,7 +35,9 @@ public sealed class AzureBlobDerivativeImageCache : IDerivativeImageCache
         AzureBlobCacheOptions blob = blobOptions.Value;
         _containerClient = new Lazy<Task<BlobContainerClient>>(async () =>
         {
-            var client = new BlobContainerClient(blob.ConnectionString, blob.ContainerName);
+            BlobContainerClient client = blob.ServiceUri is null
+                ? new BlobContainerClient(blob.ConnectionString, blob.ContainerName)
+                : new BlobServiceClient(blob.ServiceUri, new DefaultAzureCredential()).GetBlobContainerClient(blob.ContainerName);
             await client.CreateIfNotExistsAsync();
             return client;
         });

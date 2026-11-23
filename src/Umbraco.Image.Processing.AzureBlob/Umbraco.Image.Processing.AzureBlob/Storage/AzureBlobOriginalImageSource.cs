@@ -1,4 +1,5 @@
 using Azure;
+using Azure.Identity;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Microsoft.Extensions.Options;
@@ -33,7 +34,9 @@ public sealed class AzureBlobOriginalImageSource : IOriginalImageSource
         // Unlike AzureBlobDerivativeImageCache, this container is not created here: its lifecycle
         // belongs to Umbraco's own media file system, which owns writing to it. A missing container
         // means misconfiguration, not "first use" — surfaced as OpenReadAsync returning null.
-        _containerClient = new Lazy<Task<BlobContainerClient>>(() => Task.FromResult(new BlobContainerClient(blob.ConnectionString, blob.ContainerName)));
+        _containerClient = new Lazy<Task<BlobContainerClient>>(() => Task.FromResult(blob.ServiceUri is null
+            ? new BlobContainerClient(blob.ConnectionString, blob.ContainerName)
+            : new BlobServiceClient(blob.ServiceUri, new DefaultAzureCredential()).GetBlobContainerClient(blob.ContainerName)));
     }
 
     public async Task<Stream?> OpenReadAsync(string requestPath, CancellationToken cancellationToken = default)

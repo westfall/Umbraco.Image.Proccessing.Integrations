@@ -18,6 +18,13 @@ public sealed class AzureBlobCacheOptions
     public string ConnectionString { get; set; } = string.Empty;
 
     /// <summary>
+    /// The storage account's Blob endpoint, e.g. <c>https://myaccount.blob.core.windows.net</c>. When set,
+    /// <see cref="ConnectionString" /> is not used and the client signs in with <c>DefaultAzureCredential</c>
+    /// (a managed identity in Azure), so no account key is needed.
+    /// </summary>
+    public Uri? ServiceUri { get; set; }
+
+    /// <summary>
     /// The container derivative output is cached into. Created automatically on first use if it
     /// doesn't already exist. Deliberately its own container, separate from wherever Umbraco's media
     /// original images live — <c>ClearAsync</c>/<c>EvictExpiredAsync</c> enumerate and delete everything in
