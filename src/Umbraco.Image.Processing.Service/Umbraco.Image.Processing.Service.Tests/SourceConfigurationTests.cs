@@ -134,6 +134,20 @@ public sealed class SourceConfigurationTests : IDisposable
     }
 
     [Fact]
+    public void AzureBlobWithAServiceUriInsteadOfAConnectionString_Starts()
+    {
+        using WebApplicationFactory<Program> factory = ServiceFactory.Create(new Dictionary<string, string?>
+        {
+            ["ImageProcessing:Sources:1:RoutePrefix"] = "/-/archive",
+            ["ImageProcessing:Sources:1:Storage:Mode"] = "AzureBlob",
+            ["ImageProcessing:Sources:1:Storage:AzureBlob:ContainerName"] = "archive",
+            ["ImageProcessing:Sources:1:Storage:AzureBlob:ServiceUri"] = "https://myaccount.blob.core.windows.net",
+        });
+
+        using HttpClient client = factory.CreateClient();
+    }
+
+    [Fact]
     public void InvalidPathPattern_FailsAtStartup_NamingTheSource()
     {
         using WebApplicationFactory<Program> factory = ServiceFactory.Create(new Dictionary<string, string?>

@@ -18,6 +18,13 @@ public sealed class AzureBlobOriginalImageSourceOptions
     public string ConnectionString { get; set; } = string.Empty;
 
     /// <summary>
+    /// The storage account's Blob endpoint, e.g. <c>https://myaccount.blob.core.windows.net</c>. When set,
+    /// <see cref="ConnectionString" /> is not used and the client signs in with <c>DefaultAzureCredential</c>
+    /// (a managed identity in Azure), so no account key is needed.
+    /// </summary>
+    public Uri? ServiceUri { get; set; }
+
+    /// <summary>
     /// The container Umbraco's media file system writes original images into. Not created automatically —
     /// unlike the derivative cache, this container's lifecycle belongs to Umbraco's media file system,
     /// not to this reader. Must match whatever <c>ContainerName</c> Umbraco's own Blob media file

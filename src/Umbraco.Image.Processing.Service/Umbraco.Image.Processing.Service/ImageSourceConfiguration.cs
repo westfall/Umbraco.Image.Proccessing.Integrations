@@ -68,6 +68,8 @@ internal static class ImageSourceConfiguration
 
             problems.AddRange(RequiredSettings(mode, several)
                 .Where(setting => string.IsNullOrWhiteSpace(storage[setting]))
+                // AzureBlob:ServiceUri (managed identity) stands in for the connection string.
+                .Where(setting => setting != "AzureBlob:ConnectionString" || string.IsNullOrWhiteSpace(storage["AzureBlob:ServiceUri"]))
                 .Select(setting => $"{name}: Storage:{setting} is required for Storage:Mode {mode}."));
 
             sources.Add(new ConfiguredImageSource(entry.Key, routePrefix, mode, storage));

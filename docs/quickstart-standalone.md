@@ -212,6 +212,12 @@ prefix. `BlobPathPrefix` defaults to `"media"`, matching
 `Umbraco.StorageProviders.AzureBlob`'s own default blob naming; only change it
 if you've overridden `ContainerRootPath`/`VirtualPath` on the Umbraco side.
 
+To sign in with a managed identity instead of an account key, set
+`ServiceUri` (`https://<account>.blob.core.windows.net`) in place of
+`ConnectionString`. The service then uses `DefaultAzureCredential`; a
+user-assigned identity is picked with the `AZURE_CLIENT_ID` environment
+variable. The identity needs **Storage Blob Data Reader** on the container.
+
 If you also enable `AzureBlobDerivativeImageCache` (ticket 05) for the
 derivative cache, it can share the **same storage account** (the same
 `ConnectionString`) as this — but keep it in its **own container**
